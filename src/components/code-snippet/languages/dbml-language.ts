@@ -68,7 +68,7 @@ export const setupDBMLLanguage = (monaco: Monaco) => {
 
                 // Match unquoted data types
                 [
-                    /\b(integer|bigint|smallint|uuid|text|char|character|varchar|character varying|timestamp|date|time|boolean|decimal|numeric|real|double precision)\b( *\([^)]*\))?/i,
+                    /\b(integer|bigint|smallint|uuid|text|char|character|varchar|character varying|timestamp|date|time|boolean|decimal|numeric|real|double precision|json|jsonb|enum|set|array|user-defined)\b( *\([^)]*\))?/i,
                     'type',
                 ],
             ],

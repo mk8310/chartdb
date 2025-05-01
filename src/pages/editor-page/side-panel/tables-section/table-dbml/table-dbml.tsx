@@ -37,6 +37,15 @@ const databaseTypeToImportFormat = (
     }
 };
 
+// Fix DBML formatting to ensure consistent display of char and varchar types
+const normalizeCharTypeFormat = (dbml: string): string => {
+    // Replace "char (N)" with "char(N)" to match varchar's formatting
+    return dbml
+        .replace(/"char "/g, 'char')
+        .replace(/"char \(([0-9]+)\)"/g, 'char($1)')
+        .replace(/"character \(([0-9]+)\)"/g, 'character($1)');
+};
+
 export const TableDBML: React.FC<TableDBMLProps> = ({ filteredTables }) => {
     const { currentDiagram } = useChartDB();
     const { effectiveTheme } = useTheme();
@@ -127,7 +136,9 @@ export const TableDBML: React.FC<TableDBMLProps> = ({ filteredTables }) => {
             const importFormat = databaseTypeToImportFormat(
                 currentDiagram.databaseType
             );
-            return importer.import(baseScript, importFormat);
+            // Apply the normalization function to fix char type formatting
+            const dbml = importer.import(baseScript, importFormat);
+            return normalizeCharTypeFormat(dbml);
         } catch (e) {
             console.error(e);
 
