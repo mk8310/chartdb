@@ -72,6 +72,27 @@ export const ChartDBProvider: React.FC<
         string | null
     >(null);
 
+    // Function to check if a custom type is used by any field
+    const isCustomTypeUsed = useCallback(
+        (customTypeIdToCheck: string): boolean => {
+            const typeToFind = customTypes.find(
+                (ct) => ct.id === customTypeIdToCheck
+            );
+            if (!typeToFind) return false;
+            const typeNameToFind = typeToFind.name;
+
+            for (const table of tables) {
+                for (const field of table.fields) {
+                    if (field.type.name === typeNameToFind) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+        [tables, customTypes]
+    );
+
     const diffCalculatedHandler = useCallback((event: DiffCalculatedEvent) => {
         const { tablesAdded, fieldsAdded, relationshipsAdded } = event.data;
         setTables((tables) =>
@@ -1810,6 +1831,7 @@ export const ChartDBProvider: React.FC<
             // New highlight feature
             highlightedCustomTypeId,
             setHighlightedCustomTypeId,
+            isCustomTypeUsed,
         }),
         [
             diagramId,
@@ -1885,6 +1907,7 @@ export const ChartDBProvider: React.FC<
             // New highlight feature dependencies
             highlightedCustomTypeId,
             setHighlightedCustomTypeId,
+            isCustomTypeUsed,
         ]
     );
 
