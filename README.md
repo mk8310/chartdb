@@ -109,6 +109,21 @@ docker build -t chartdb .
 docker run -e OPENAI_API_KEY=<YOUR_OPEN_AI_KEY> -p 8080:80 chartdb
 ```
 
+#### Fullstack Image with PostgreSQL
+
+Pass database connection details and admin credentials as build arguments:
+
+```bash
+docker build \
+  --build-arg POSTGRES_URL=postgres://postgres:postgres@localhost:5432/chartdb \
+  --build-arg JWT_SECRET=your_secret \
+  --build-arg ADMIN_EMAIL=admin@example.com \
+  --build-arg ADMIN_PASSWORD=changeme \
+  -t chartdb .
+
+docker run -p 3000:3000 chartdb
+```
+
 #### Using Custom Inference Server
 
 ```bash
@@ -127,7 +142,35 @@ docker run \
 
 > **Note:** You must configure either Option 1 (OpenAI API key) OR Option 2 (Custom endpoint and model name) for AI capabilities to work. Do not mix the two options.
 
-Open your browser and navigate to `http://localhost:8080`.
+Open your browser and navigate to `http://localhost:3000`.
+
+
+### Backend API
+
+A simple Express server is provided in the `server/` directory. The service uses PostgreSQL and JWT for authentication. During container build the schema will be applied and an optional admin account created. Configure the following environment variables:
+
+```
+POSTGRES_URL=postgres://postgres:postgres@localhost:5432/chartdb
+JWT_SECRET=your_secret
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=changeme
+```
+
+You can run Postgres locally or with Docker Compose:
+
+```yaml
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: chartdb
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+```
+
+Start the API with `node server/index.js`. The Docker image runs this automatically on port 3000.
 
 Example configuration for a local vLLM server:
 

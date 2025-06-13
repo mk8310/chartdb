@@ -139,6 +139,17 @@ const routes: RouteObject[] = [
         },
     },
     {
+        path: 'admin/users',
+        async lazy() {
+            const { AdminUsersPage } = await import(
+                './pages/admin-users-page/admin-users-page'
+            );
+            return {
+                element: <AdminUsersPage />,
+            };
+        },
+    },
+    {
         path: '*',
         async lazy() {
             const { NotFoundPage } = await import(
